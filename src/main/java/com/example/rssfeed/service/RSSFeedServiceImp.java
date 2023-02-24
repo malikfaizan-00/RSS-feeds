@@ -59,7 +59,7 @@ public class RSSFeedServiceImp implements RSSFeedService {
         List<RSSFeedDto> listOfRssFeeds = new ArrayList<>();
         for (String url : urls) {
             if (validator.isValid(url)) {
-                listOfRssFeeds = dataAnalysisService.getFeeds(url, uuid);
+                listOfRssFeeds.addAll(dataAnalysisService.getFeeds(url, uuid));
             }
         }
         List<List<String>> analizedRSSFeed = dataAnalysisService.dataAnalysis(listOfRssFeeds);
