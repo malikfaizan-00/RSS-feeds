@@ -56,22 +56,32 @@ public class RSSFeedServiceImp implements RSSFeedService {
     @Override
     public String analyseRSSFeed(final List<String> urls) throws IOException {
         String uuid = UUID.randomUUID().toString();
+        List<RSSFeedDto> listOfRssFeeds = new ArrayList<>();
         for (String url : urls) {
             if (validator.isValid(url)) {
-                List<RSSFeedDto> listOfRssFeeds = dataAnalysisService.getFeeds(url, uuid);
-
-                List<List<String>> analizedRSSFeed = dataAnalysisService.dataAnalysis(listOfRssFeeds);
-                if (!analizedRSSFeed.isEmpty()) {
-                    Set<String> intersection = dataAnalysisService.intersection(new HashSet<>(), analizedRSSFeed);
-                    for (RSSFeedDto rssFeedDto : listOfRssFeeds) {
-                        ArrayList<String> allWords = Stream.of(rssFeedDto.getTitle().split(" "))
-                                .collect(Collectors.toCollection(ArrayList<String>::new));
-                        allWords.removeAll(stopwords);
-
-                        rssFeedDto.setFreqCount(Collections.frequency(allWords, intersection));
-                        saveRSSFeed(rssFeedDto);
-                    }
+                listOfRssFeeds = dataAnalysisService.getFeeds(url, uuid);
+            }
+        }
+        List<List<String>> analizedRSSFeed = dataAnalysisService.dataAnalysis(listOfRssFeeds);
+        if (!analizedRSSFeed.isEmpty()) {
+            Set<String> intersection = new HashSet<>();
+            for (int i = 0; i < analizedRSSFeed.size(); ++i) {
+                for (int j = i + 1; j < analizedRSSFeed.size(); ++j) {
+                    intersection.addAll(dataAnalysisService.intersection(new HashSet<>(), analizedRSSFeed.get(i), analizedRSSFeed.get(j)));
                 }
+            }
+
+            for (RSSFeedDto rssFeedDto : listOfRssFeeds) {
+                ArrayList<String> allWords = Stream.of(rssFeedDto.getTitle().split(" "))
+                        .collect(Collectors.toCollection(ArrayList<String>::new));
+                allWords.removeAll(stopwords);
+
+                int freqCount = 0;
+                for (String key : allWords) {
+                    freqCount += Collections.frequency(intersection, key);
+                }
+                rssFeedDto.setFreqCount(freqCount);
+                saveRSSFeed(rssFeedDto);
             }
         }
         return uuid;

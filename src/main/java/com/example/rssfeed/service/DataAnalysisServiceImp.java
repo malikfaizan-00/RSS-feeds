@@ -58,7 +58,7 @@ public class DataAnalysisServiceImp implements DataAnalysisService {
     }
 
     @Override
-    public <T, C extends Collection<T>> C intersection(C newCollection, List<List<T>> collections) {
+    public <T, C extends Collection<T>> C intersection(C newCollection, Collection<T>... collections) {
         boolean first = true;
         for (Collection<T> collection : collections) {
             if (first) {
@@ -77,12 +77,9 @@ public class DataAnalysisServiceImp implements DataAnalysisService {
             JAXBContext context = JAXBContext.newInstance(RSS.class);
             HttpURLConnection http = (HttpURLConnection) urlSource.openConnection();
             http.addRequestProperty("Content-Type", MediaType.APPLICATION_XML_VALUE);
-            http.setAllowUserInteraction(false);
-            http.setDoInput(true);
-            http.setDoOutput(false);
-            http.setUseCaches(true);
             http.setRequestMethod("GET");
-            http.getContent();
+            http.setRequestProperty("Accept-Language", "en-US");
+            http.setRequestProperty("Connection", "close");
             InputStream is = http.getInputStream();
             Unmarshaller un = context.createUnmarshaller();
 
@@ -93,6 +90,6 @@ public class DataAnalysisServiceImp implements DataAnalysisService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return rss.getChannel().get(0);
+        return rss.getChannel();
     }
 }

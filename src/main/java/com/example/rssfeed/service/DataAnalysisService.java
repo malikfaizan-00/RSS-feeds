@@ -13,5 +13,5 @@ public interface DataAnalysisService {
 
 //    Set<String> intersection(List<List<String>> lists);
 
-    <T, C extends Collection<T>> C intersection(C newCollection, List<List<T>> collections);
+    <T, C extends Collection<T>> C intersection(C newCollection, Collection<T>... collections);
 }

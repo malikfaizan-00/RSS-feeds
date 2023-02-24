@@ -57,16 +57,12 @@ class DataAnalysisServiceTest {
     @Test
     void intersection_returns3IntegerValue() {
         //given
-        List<List<Integer>> lists = new ArrayList<>();
         List<Integer> l1 = List.of(1, 3, 5, 7, 9, 11, 13);
         List<Integer> l2 = List.of(1, 2, 3, 5, 8, 13);
         List<Integer> l3 = List.of(2, 3, 5, 7, 11, 13);
-        lists.add(l1);
-        lists.add(l2);
-        lists.add(l3);
 
         //when
-        Set<Integer> rssFeedIntersection = dataAnalysisService.intersection(new HashSet<>(), lists);
+        Set<Integer> rssFeedIntersection = dataAnalysisService.intersection(new HashSet<>(), l1, l2, l3);
         Set<Integer> intersection = new HashSet(Arrays.asList(3, 5, 13));
 
         //then
@@ -76,14 +72,11 @@ class DataAnalysisServiceTest {
     @Test
     void intersection_returns2StringValue() {
         //given
-        List<List<String>> lists = new ArrayList<>();
         List<String> l1 = Arrays.asList("red", "blue", "blue", "green", "red");
         List<String> l2 = Arrays.asList("red", "green", "green", "yellow");
-        lists.add(l1);
-        lists.add(l2);
 
         //when
-        Set<String> actualValue = dataAnalysisService.intersection(new HashSet<>(), lists);
+        Set<String> actualValue = dataAnalysisService.intersection(new HashSet<>(), l1, l2);
         Set<String> expectedValue = new HashSet(Arrays.asList("red", "green"));
 
         //then
