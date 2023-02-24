@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface RSSFeedRepository extends JpaRepository<RSSFeed, Long> {
     List<RSSFeedDto> findTop3ByUuidOrderByFreqCountDesc(String id);
+
     RSSFeed findRSSFeedsByUuid(String uuid);
 }

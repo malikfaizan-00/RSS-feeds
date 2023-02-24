@@ -24,7 +24,7 @@ public class RSSFeedServiceImp implements RSSFeedService {
     private RSSFeedRepository rssFeedRepository;
 
     @Override
-    public RSSFeedDto saveRSSFeed(RSSFeedDto rssFeedDto) {
+    public RSSFeedDto saveRSSFeed(final RSSFeedDto rssFeedDto) {
         RSSFeed rssFeed = RSSFeedMapper.MAPPER.mapToRSSFeed(rssFeedDto);
 
         RSSFeed savedRSSFeed = rssFeedRepository.save(rssFeed);
@@ -34,7 +34,7 @@ public class RSSFeedServiceImp implements RSSFeedService {
     }
 
     @Override
-    public List<RSSFeedDto> getRSSFeedById(String rssFeedId) {
+    public List<RSSFeedDto> getRSSFeedById(final String rssFeedId) {
         return rssFeedRepository.findTop3ByUuidOrderByFreqCountDesc(rssFeedId);
     }
 
@@ -44,17 +44,17 @@ public class RSSFeedServiceImp implements RSSFeedService {
     }
 
     @Override
-    public RSSFeedDto updateRSSFeed(RSSFeedDto rssFeedDto) {
+    public RSSFeedDto updateRSSFeed(final RSSFeedDto rssFeedDto) {
         return null;
     }
 
     @Override
-    public void deleteRSSFeed(Long rssFeedId) {
+    public void deleteRSSFeed(final Long rssFeedId) {
 
     }
 
     @Override
-    public String analyseRSSFeed(List<String> urls) throws IOException {
+    public String analyseRSSFeed(final List<String> urls) throws IOException {
         String uuid = UUID.randomUUID().toString();
         for (String url : urls) {
             if (validator.isValid(url)) {
@@ -62,7 +62,7 @@ public class RSSFeedServiceImp implements RSSFeedService {
 
                 List<List<String>> analizedRSSFeed = dataAnalysisService.dataAnalysis(listOfRssFeeds);
                 if (!analizedRSSFeed.isEmpty()) {
-                    Set<String> intersection = dataAnalysisService.intersection(analizedRSSFeed);
+                    Set<String> intersection = dataAnalysisService.intersection(new HashSet<>(), analizedRSSFeed);
                     for (RSSFeedDto rssFeedDto : listOfRssFeeds) {
                         ArrayList<String> allWords = Stream.of(rssFeedDto.getTitle().split(" "))
                                 .collect(Collectors.toCollection(ArrayList<String>::new));

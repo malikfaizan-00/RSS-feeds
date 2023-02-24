@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.BDDAssertions.then;
@@ -83,6 +85,17 @@ class RSSFeedServiceTest {
     }
 
     @Test
-    void analyseRSSFeed() {
+    void analyseRSSFeed_returnsUUIDFromServiceLayer() throws IOException {
+
+        //given
+        List<String> urls = new ArrayList<>();
+        urls.add("https://news.google.com/news?cf=all&hl=en&pz=1&ned=us&output=rss");
+
+        //when
+        String serviceuuid = rssFeedService.analyseRSSFeed(urls);
+
+        //then
+        then(serviceuuid).isNotNull();
+        then(serviceuuid).isNotEmpty();
     }
 }

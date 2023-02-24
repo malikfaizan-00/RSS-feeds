@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -30,10 +31,14 @@ public class RSSFeedController {
             @RequestBody final List<String> urls
     ) throws IOException {
         if (urls.size() <= 1) {
-            return new ResponseEntity(HttpStatus.FORBIDDEN);
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .body("Please provide at least two RSS URLs as a parameter.");
         }
         String uuid = rssFeedService.analyseRSSFeed(urls);
-        return new ResponseEntity<>(uuid, HttpStatus.OK);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(uuid);
     }
 
     @RequestMapping(
@@ -47,7 +52,9 @@ public class RSSFeedController {
         List<RSSFeedDto> rssFeedList = rssFeedService.getRSSFeedById(id);
         if (rssFeedList.size() > 0)
             return ResponseEntity.ok().body(rssFeedList);
-        return new ResponseEntity(HttpStatus.NOT_FOUND);
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ArrayList<>());
     }
 
     @RequestMapping(
@@ -56,6 +63,8 @@ public class RSSFeedController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<List<RSSFeed>> getAllRSSFeed() {
         //TODO: how to send response if nothing was found? Which HTTP code?
-        return ResponseEntity.ok().body(rssFeedService.getAllRSSFeeds());
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(rssFeedService.getAllRSSFeeds());
     }
 }

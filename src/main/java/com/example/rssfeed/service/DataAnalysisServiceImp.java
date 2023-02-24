@@ -17,9 +17,8 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,7 +27,7 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 public class DataAnalysisServiceImp implements DataAnalysisService {
-    public List<RSSFeedDto> getFeeds(String url, String uuid) {
+    public List<RSSFeedDto> getFeeds(final String url, final String uuid) {
         List<Item> rssFeeds = new ArrayList<>();
         try {
             URL urlSource = new URL(url);
@@ -37,13 +36,13 @@ public class DataAnalysisServiceImp implements DataAnalysisService {
         } catch (Exception e) {
 
         }
-        return rssFeeds.parallelStream()
+        return rssFeeds.stream()
                 .map(r -> new RSSFeedDto(null, uuid, r.getTitle(), r.getLink(), 1))
                 .collect(toList());
     }
 
     @Override
-    public List<List<String>> dataAnalysis(List<RSSFeedDto> rssFeeds) throws IOException {
+    public List<List<String>> dataAnalysis(final List<RSSFeedDto> rssFeeds) throws IOException {
         List<List<String>> getAllFeedWords = new ArrayList<>();
         if (stopwords == null) {
             stopwords = Files.readAllLines(Paths.get("src/main/resources/english_stopwords.txt"));
@@ -59,34 +58,20 @@ public class DataAnalysisServiceImp implements DataAnalysisService {
     }
 
     @Override
-    public Set<String> intersection(List<List<String>> lists) {
-        Set<String> intersectionList = new HashSet<>();
-
-        for (int i = 0; i < lists.size(); ++i) {
-            for (int j = i + 1; j < lists.size() - 1; ++j) {
-                if (lists.get(i).size() > lists.get(j).size()) {
-                    for (String str : lists.get(j)) {
-                        if (lists.get(i).contains(str)) {
-                            if (str.length() > 3) {
-                                intersectionList.add(str);
-                            }
-                        }
-                    }
-                } else {
-                    for (String str : lists.get(i)) {
-                        if (lists.get(j).contains(str)) {
-                            if (str.length() > 3) {
-                                intersectionList.add(str);
-                            }
-                        }
-                    }
-                }
+    public <T, C extends Collection<T>> C intersection(C newCollection, List<List<T>> collections) {
+        boolean first = true;
+        for (Collection<T> collection : collections) {
+            if (first) {
+                newCollection.addAll(collection);
+                first = false;
+            } else {
+                newCollection.retainAll(collection);
             }
         }
-        return intersectionList;
+        return newCollection;
     }
 
-    private static Channel convertXMLToObject(URL urlSource) {
+    private static Channel convertXMLToObject(final URL urlSource) {
         RSS rss = null;
         try {
             JAXBContext context = JAXBContext.newInstance(RSS.class);

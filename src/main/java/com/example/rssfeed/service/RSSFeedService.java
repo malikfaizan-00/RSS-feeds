@@ -7,15 +7,15 @@ import java.io.IOException;
 import java.util.List;
 
 public interface RSSFeedService {
-    RSSFeedDto saveRSSFeed(RSSFeedDto rssFeedDto);
+    RSSFeedDto saveRSSFeed(final RSSFeedDto rssFeedDto);
 
-    List<RSSFeedDto> getRSSFeedById(String rssFeedId);
+    List<RSSFeedDto> getRSSFeedById(final String rssFeedId);
 
     List<RSSFeed> getAllRSSFeeds();
 
-    RSSFeedDto updateRSSFeed(RSSFeedDto rssFeedDto);
+    RSSFeedDto updateRSSFeed(final RSSFeedDto rssFeedDto);
 
-    void deleteRSSFeed(Long rssFeedId);
+    void deleteRSSFeed(final Long rssFeedId);
 
-    String analyseRSSFeed(List<String> urls) throws IOException;
+    String analyseRSSFeed(final List<String> urls) throws IOException;
 }
